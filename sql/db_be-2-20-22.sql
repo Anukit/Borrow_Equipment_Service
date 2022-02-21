@@ -106,8 +106,7 @@ CREATE TABLE `reports`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'genarate by base',
   `member_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'คนที่ยืม/คืน ',
   `equipment_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'ครุภัณฑ์',
-  `
-status` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'สถานะ( 0 = กำลังใช้งาน(หรือถูกยืม) , 1 = คืนแล้ว ) ',
+  `status` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'สถานะ( 0 = กำลังใช้งาน(หรือถูกยืม) , 1 = คืนแล้ว ) ',
   `used_department_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'ครุภัณฑ์ถูกใช้ในแผนกอะไร',
   `admin_approve_borrow` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'คนอนุมัติการยืม',
   `borrow_date` datetime NOT NULL COMMENT 'วันที่ยืม',

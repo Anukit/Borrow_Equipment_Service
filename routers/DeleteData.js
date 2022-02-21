@@ -6,6 +6,7 @@ const DeleteData = require("../models/DeleteData");
 router.post("/", async function (req, res, next) {
   let type_user = req.body.type_user;
   let dataResponse;
+  let res_status;
 
   switch (parseInt(type_user)) {
     ////////////////////////////Admin////////////////////////////////
@@ -33,14 +34,16 @@ router.post("/", async function (req, res, next) {
     }
 
     default:
+      res_status = true;
       res.json({ status: "Failed", data: "กำหนด Type User ระหว่าง 0-4" });
       break;
   }
-
-  if (dataResponse) {
-    res.json({ status: "Succeed", data: "Delete data successfully" });
-  } else {
-    res.json({ status: "Failed", data: "Error" });
+  if (!res_status) {
+    if (dataResponse) {
+      res.json({ status: "Succeed", data: "Delete data successfully" });
+    } else {
+      res.json({ status: "Failed", data: "Error" });
+    }
   }
 });
 

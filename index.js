@@ -3,7 +3,7 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 const app = express();
 
-var server = app.listen(3000, function () {
+const server = app.listen(3000, function () {
   console.log("Ready on port %d", server.address().port);
 });
 
@@ -14,6 +14,10 @@ app.use(
     extended: false,
   })
 );
+
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
 
 //require routes
 var CheckAPI = require("./routers/CheckAPI");
@@ -26,6 +30,8 @@ var GetData = require("./routers/GetData");
 var Borrowing = require("./routers/Borrowing");
 var Reverting = require("./routers/Reverting");
 var Search = require("./routers/Search");
+var Notification = require("./routers/Notification");
+var setReadNoti = require("./routers/setReadNoti");
 
 //use routes
 app.use("/", CheckAPI);
@@ -38,5 +44,21 @@ app.use("/GetData", GetData);
 app.use("/Borrowing", Borrowing);
 app.use("/Reverting", Reverting);
 app.use("/Search", Search);
+app.use("/setReadNoti", setReadNoti);
 
 app.use(express.static("uploads")); //สำหรับโชว์รูปภาพใน service
+
+const io = require("socket.io")(server);
+
+io.on("connection", function (client) {
+  console.log("Client connected..");
+  // client.on("join", function (data) {
+  //   console.log(data);
+  // });
+  setInterval(async function () {
+    let dataSend = await Notification.sendNoti();
+    if (dataSend.length > 0) {
+      io.sockets.emit("dataNoti", dataSend);
+    }
+  }, 1000);
+});

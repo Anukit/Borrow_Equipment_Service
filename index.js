@@ -60,5 +60,5 @@ io.on("connection", function (client) {
     if (dataSend.length > 0) {
       io.sockets.emit("dataNoti", dataSend);
     }
-  }, 1000);
+  }, 1000 * 10);
 });

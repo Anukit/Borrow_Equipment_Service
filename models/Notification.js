@@ -16,7 +16,7 @@ var Notification = {
 
   checkDataNoti: function (reportID, callback) {
     return db.query(
-      `SELECT * FROM notification WHERE report_id = ?`,
+      `SELECT * FROM notification WHERE report_id = ? AND active = 1`,
       [reportID],
       callback
     );
@@ -32,7 +32,7 @@ var Notification = {
 
   updateDateSendNoti: function (NotiID, callback) {
     return db.query(
-      `UPDATE notification SET update_at = now(), active= 1 WHERE id = ?`,
+      `UPDATE notification SET update_at = now(), active= 1 WHERE id = ? AND active = 1`,
       [NotiID],
       callback
     );
@@ -40,7 +40,7 @@ var Notification = {
 
   setReadNoti: function (reportID, callback) {
     return db.query(
-      `UPDATE notification SET read_noti = 1, update_at = now(), active= 1 WHERE report_id = ?`,
+      `UPDATE notification SET read_noti = 1, update_at = now(), active= 1 WHERE report_id = ? AND active = 1`,
       [reportID],
       callback
     );

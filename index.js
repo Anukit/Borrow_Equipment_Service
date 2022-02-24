@@ -31,7 +31,7 @@ var Borrowing = require("./routers/Borrowing");
 var Reverting = require("./routers/Reverting");
 var Search = require("./routers/Search");
 var Notification = require("./routers/Notification");
-var setReadNoti = require("./routers/setReadNoti");
+var SetData = require("./routers/SetData");
 
 //use routes
 app.use("/", CheckAPI);
@@ -44,7 +44,7 @@ app.use("/GetData", GetData);
 app.use("/Borrowing", Borrowing);
 app.use("/Reverting", Reverting);
 app.use("/Search", Search);
-app.use("/setReadNoti", setReadNoti);
+app.use("/SetData", SetData);
 
 app.use(express.static("uploads")); //สำหรับโชว์รูปภาพใน service
 

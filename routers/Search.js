@@ -41,7 +41,7 @@ router.post("/EquipRemain", async function (req, res, next) {
 });
 
 //เสิร์ชข้อมูลรายงาน
-router.post("/DataReprot", async function (req, res, next) {
+router.post("/DataReport", async function (req, res, next) {
   let typeSearch = req.body.typeSearch;
   var typeSearchList = ["1", "2", "3"];
 

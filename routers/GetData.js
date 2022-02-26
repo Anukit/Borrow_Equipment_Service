@@ -29,7 +29,7 @@ router.get("/DataMemberAll/:indexPage", async function (req, res) {
         status: "Succeed",
         data: {
           totalCount: dataMemberCount.length,
-          dataMember: dataMemberAll,
+          aaData: dataMemberAll,
         },
       });
     } else {
@@ -66,7 +66,7 @@ router.get("/DataEquipAll/:indexPage", async function (req, res) {
         status: "Succeed",
         data: {
           totalCount: dataEquipCount.length,
-          dataMember: dataEquipAll,
+          aaData: dataEquipAll,
         },
       });
     } else {
@@ -138,7 +138,7 @@ router.get("/DataBorrowing/:indexPage", async function (req, res) {
         status: "Succeed",
         data: {
           totalCount: dataBorrowCount.length,
-          dataMember: dataBorrowing,
+          aaData: dataBorrowing,
         },
       });
     } else {
@@ -160,7 +160,7 @@ router.get("/DataReverting/:indexPage", async function (req, res) {
         status: "Succeed",
         data: {
           totalCount: dataRevertCount.length,
-          dataMember: dataReverting,
+          aaData: dataReverting,
         },
       });
     } else {
@@ -182,7 +182,7 @@ router.get("/DataReport/:indexPage", async function (req, res) {
         status: "Succeed",
         data: {
           totalCount: dataReportCount.length,
-          dataMember: dataDataReport,
+          aaData: dataDataReport,
         },
       });
     } else {

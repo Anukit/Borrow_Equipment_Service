@@ -82,21 +82,32 @@ router.get("/DataEquipRemain/:indexPage", async function (req, res) {
   let indexPage = req.params.indexPage;
   let listIDEquip = [];
   let listDataEquip = [];
-  let revertData = await Utility.getDataReverting(indexPage, true);
+  let borrowData = await getDataBorrowing(indexPage, true);
   let equipdata = await getDataEquipAll(indexPage, true);
 
-  if (revertData != null && equipdata != null) {
+  if (borrowData != null && equipdata != null) {
+    let listIDEquip = equipdata;
+    let listBorrow = [];
+
     for (let i = 0; i < equipdata.length; i++) {
-      for (let y = 0; y < revertData.length; y++) {
-        if (equipdata[i]["equip_id"] != revertData[y]["equip_id"]) {
-          listIDEquip.push(equipdata[i]["equip_id"]);
+      for (let y = 0; y < borrowData.length; y++) {
+        if (equipdata[i]["equip_id"] == borrowData[y]["equip_id"]) {
+          listBorrow.push(equipdata[i]["equip_id"]);
+        }
+      }
+    }
+
+    for (let index = 0; index < equipdata.length; index++) {
+      for (let x = 0; x < listBorrow.length; x++) {
+        if (equipdata[index]["equip_id"] == listBorrow[x]) {
+          listIDEquip.splice(index, 1);
         }
       }
     }
     for (let index = 0; index < listIDEquip.length; index++) {
       let dataEquipRemain = await Utility.getDataEquipRemain(
         indexPage,
-        listIDEquip[index],
+        listIDEquip[index]["equip_id"],
         false
       );
       if (dataEquipRemain != null) {

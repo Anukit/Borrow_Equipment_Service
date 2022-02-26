@@ -72,10 +72,10 @@ var GetData = {
           callback
         )
       : db.query(
-          `SELECT a.id AS report_id, b.id AS equip_id, c.id AS depart_id FROM reports as a 
+          `SELECT a.id AS report_id, c.id AS equip_id, b.id AS depart_id FROM reports as a 
           JOIN member as b ON a.member_id = b.id
           JOIN equipment as c ON a.equipment_id = c.id
-          WHERE a.status = 0 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC `,
+          WHERE a.status = 0 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC`,
           callback
         );
   },
@@ -93,7 +93,7 @@ var GetData = {
           callback
         )
       : db.query(
-          `SELECT a.id AS report_id, b.id AS equip_id, c.id AS depart_id FROM reports as a 
+          `SELECT a.id AS report_id, b.id AS member_id, c.id AS equip_id FROM reports as a 
           JOIN member as b ON a.member_id = b.id
           JOIN equipment as c ON a.equipment_id = c.id
           WHERE a.status = 1 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.return_date DESC`,
@@ -115,7 +115,7 @@ var GetData = {
           callback
         )
       : db.query(
-          `SELECT a.id AS report_id, b.id AS equip_id, c.id AS depart_id FROM reports as a 
+          `SELECT a.id AS report_id, b.id AS member_id, c.id AS equip_id FROM reports as a 
           JOIN member as b ON a.member_id = b.id
           JOIN equipment as c ON a.equipment_id = c.id
           LEFT JOIN department as d ON a.used_department_id = d.id

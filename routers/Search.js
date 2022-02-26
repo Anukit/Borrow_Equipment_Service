@@ -5,10 +5,9 @@ const Utility = require("../controllers/Utility");
 
 //เสิร์ชข้อมูล Equipment คงเหลือ
 router.post("/EquipRemain", async function (req, res, next) {
-  let indexPage = req.body.indexPage;
   let listIDEquip = [];
   let listDataEquip = [];
-  let revertData = await Utility.getDataReverting(indexPage, true);
+  let revertData = await Utility.getDataReverting(true);
   let equipdata = await getDataEquipAll(req.body);
 
   if (revertData != null && equipdata != null) {
@@ -21,7 +20,6 @@ router.post("/EquipRemain", async function (req, res, next) {
     }
     for (let index = 0; index < listIDEquip.length; index++) {
       let dataEquipRemain = await Utility.getDataEquipRemain(
-        indexPage,
         listIDEquip[index],
         false
       );

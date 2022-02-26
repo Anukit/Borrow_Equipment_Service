@@ -1,20 +1,15 @@
 const GetData = require("../models/GetData");
 
-exports.getDataEquipRemain = (indexPage, equipID, total_data) => {
+exports.getDataEquipRemain = (equipID, total_data) => {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataEquipRemain(
-        indexPage,
-        equipID,
-        total_data,
-        (err, rows) => {
-          if (rows != null) {
-            resolve(rows);
-          } else {
-            resolve(null);
-          }
+      GetData.getDataEquipRemain(equipID, total_data, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
         }
-      );
+      });
     } catch (err) {
       console.log(err);
       resolve(null);
@@ -22,10 +17,10 @@ exports.getDataEquipRemain = (indexPage, equipID, total_data) => {
   });
 };
 
-exports.getDataReverting = (indexPage, total_data) => {
+exports.getDataReverting = (total_data) => {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataReverting(indexPage, total_data, (err, rows) => {
+      GetData.getDataReverting(total_data, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {

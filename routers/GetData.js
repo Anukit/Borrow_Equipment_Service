@@ -19,16 +19,15 @@ router.get("/DataMember/:rfid", async function (req, res) {
 });
 
 //แสดงข้อมูล Member ทั้งหมดในตาราง
-router.get("/DataMemberAll/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
-  let dataMemberCount = await getDataMemberAll(indexPage, true);
-  let dataMemberAll = await getDataMemberAll(indexPage, false);
+router.get("/DataMemberAll", async function (req, res) {
+  let dataMemberCount = await getDataMemberAll(true);
+  let dataMemberAll = await getDataMemberAll(false);
   if (dataMemberAll != null) {
     if (dataMemberAll.length > 0 && dataMemberCount.length > 0) {
       res.json({
         status: "Succeed",
         data: {
-          totalCount: dataMemberCount.length,
+          iTotalRecords: dataMemberCount.length,
           aaData: dataMemberAll,
         },
       });
@@ -56,16 +55,15 @@ router.get("/DataEquip/:rfid", async function (req, res) {
 });
 
 //แสดงข้อมูล Equipment ทั้งหมดในตาราง
-router.get("/DataEquipAll/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
-  let dataEquipCount = await getDataEquipAll(indexPage, true);
-  let dataEquipAll = await getDataEquipAll(indexPage, false);
+router.get("/DataEquipAll", async function (req, res) {
+  let dataEquipCount = await getDataEquipAll(true);
+  let dataEquipAll = await getDataEquipAll(false);
   if (dataEquipAll != null) {
     if (dataEquipAll.length > 0 && dataEquipCount.length) {
       res.json({
         status: "Succeed",
         data: {
-          totalCount: dataEquipCount.length,
+          iTotalRecords: dataEquipCount.length,
           aaData: dataEquipAll,
         },
       });
@@ -78,12 +76,11 @@ router.get("/DataEquipAll/:indexPage", async function (req, res) {
 });
 
 //แสดงข้อมูล Equipment ที่คงเหลือในตาราง
-router.get("/DataEquipRemain/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
+router.get("/DataEquipRemain", async function (req, res) {
   let listIDEquip = [];
   let listDataEquip = [];
-  let borrowData = await getDataBorrowing(indexPage, true);
-  let equipdata = await getDataEquipAll(indexPage, true);
+  let borrowData = await getDataBorrowing(true);
+  let equipdata = await getDataEquipAll(true);
 
   if (borrowData != null && equipdata != null) {
     let listIDEquip = equipdata;
@@ -106,7 +103,6 @@ router.get("/DataEquipRemain/:indexPage", async function (req, res) {
     }
     for (let index = 0; index < listIDEquip.length; index++) {
       let dataEquipRemain = await Utility.getDataEquipRemain(
-        indexPage,
         listIDEquip[index]["equip_id"],
         false
       );
@@ -128,16 +124,15 @@ router.get("/DataEquipRemain/:indexPage", async function (req, res) {
 });
 
 //แสดงข้อมูลการยืม
-router.get("/DataBorrowing/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
-  let dataBorrowCount = await getDataBorrowing(indexPage, true);
-  let dataBorrowing = await getDataBorrowing(indexPage, false);
+router.get("/DataBorrowing", async function (req, res) {
+  let dataBorrowCount = await getDataBorrowing(true);
+  let dataBorrowing = await getDataBorrowing(false);
   if (dataBorrowing != null) {
     if (dataBorrowing.length > 0 && dataBorrowCount.length > 0) {
       res.json({
         status: "Succeed",
         data: {
-          totalCount: dataBorrowCount.length,
+          iTotalRecords: dataBorrowCount.length,
           aaData: dataBorrowing,
         },
       });
@@ -150,16 +145,15 @@ router.get("/DataBorrowing/:indexPage", async function (req, res) {
 });
 
 //แสดงข้อมูลการคืน
-router.get("/DataReverting/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
-  let dataRevertCount = await Utility.getDataReverting(indexPage, true);
-  let dataReverting = await Utility.getDataReverting(indexPage, false);
+router.get("/DataReverting", async function (req, res) {
+  let dataRevertCount = await Utility.getDataReverting(true);
+  let dataReverting = await Utility.getDataReverting(false);
   if (dataReverting != null) {
     if (dataReverting.length > 0 && dataRevertCount.length > 0) {
       res.json({
         status: "Succeed",
         data: {
-          totalCount: dataRevertCount.length,
+          iTotalRecords: dataRevertCount.length,
           aaData: dataReverting,
         },
       });
@@ -172,16 +166,15 @@ router.get("/DataReverting/:indexPage", async function (req, res) {
 });
 
 //แสดงข้อมูลรายงาน
-router.get("/DataReport/:indexPage", async function (req, res) {
-  let indexPage = req.params.indexPage;
-  let dataReportCount = await getDataReport(indexPage, true);
-  let dataDataReport = await getDataReport(indexPage, false);
+router.get("/DataReport", async function (req, res) {
+  let dataReportCount = await getDataReport(true);
+  let dataDataReport = await getDataReport(false);
   if (dataDataReport != null) {
     if (dataDataReport.length > 0 && dataReportCount.length > 0) {
       res.json({
         status: "Succeed",
         data: {
-          totalCount: dataReportCount.length,
+          iTotalRecords: dataReportCount.length,
           aaData: dataDataReport,
         },
       });
@@ -210,10 +203,10 @@ async function getDataMember(rfid) {
   });
 }
 
-async function getDataMemberAll(indexPage, total_data) {
+async function getDataMemberAll(total_data) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataMemberAll(indexPage, total_data, (err, rows) => {
+      GetData.getDataMemberAll(total_data, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -244,10 +237,10 @@ async function getDataEquip(rfid) {
   });
 }
 
-async function getDataEquipAll(indexPage, total_data) {
+async function getDataEquipAll(total_data) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataEquipAll(indexPage, total_data, (err, rows) => {
+      GetData.getDataEquipAll(total_data, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -283,10 +276,10 @@ async function getDataEquipAll(indexPage, total_data) {
 //   });
 // }
 
-async function getDataBorrowing(indexPage, total_data) {
+async function getDataBorrowing(total_data) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataBorrowing(indexPage, total_data, (err, rows) => {
+      GetData.getDataBorrowing(total_data, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -317,10 +310,10 @@ async function getDataBorrowing(indexPage, total_data) {
 //   });
 // }
 
-async function getDataReport(indexPage, total_data) {
+async function getDataReport(total_data) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataReport(indexPage, total_data, (err, rows) => {
+      GetData.getDataReport(total_data, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {

@@ -5,23 +5,28 @@ const Register = require("../models/Register");
 
 router.post("/PostRegis", async function (req, res, next) {
   let type_user = req.body.type_user;
+  let username = req.body.username;
   let dataResponse;
   let listDuplicateData = [];
 
   switch (parseInt(type_user)) {
     ////////////////////////////Admin////////////////////////////////
     case 1: {
-      //เช็ค username
-      let countID = await getcheckAdmin(req.body.username);
-      if (countID > 0) {
-        listDuplicateData.push("username");
+      if (username.includes("admin")) {
+        //เช็ค username
+        let countID = await getcheckAdmin(req.body.username);
+        if (countID > 0) {
+          listDuplicateData.push("username");
 
-        dataResponse = { DuplicateData: listDuplicateData };
+          dataResponse = { DuplicateData: listDuplicateData };
+        } else {
+          //เข้ารหัสผ่าน
+          let hashPW = await bcrypt.hash(req.body.enc_password, 10);
+          //บันทึกข้อมูล
+          dataResponse = await insertdataAdmin(req.body, hashPW);
+        }
       } else {
-        //เข้ารหัสผ่าน
-        let hashPW = await bcrypt.hash(req.body.enc_password, 10);
-        //บันทึกข้อมูล
-        dataResponse = await insertdataAdmin(req.body, hashPW);
+        dataResponse = "กรุณาระบุ username ที่มีคำว่า 'admin'";
       }
 
       break;
@@ -29,17 +34,21 @@ router.post("/PostRegis", async function (req, res, next) {
 
     //////////////////////////Department//////////////////////////////
     case 2: {
-      //เช็ค username
-      let countID = await getcheckDepart(req.body.username);
-      if (countID > 0) {
-        listDuplicateData.push("username");
+      if (username.includes("dpm")) {
+        //เช็ค username
+        let countID = await getcheckDepart(req.body.username);
+        if (countID > 0) {
+          listDuplicateData.push("username");
 
-        dataResponse = { DuplicateData: listDuplicateData };
+          dataResponse = { DuplicateData: listDuplicateData };
+        } else {
+          //เข้ารหัสผ่าน
+          let hashPW = await bcrypt.hash(req.body.enc_password, 10);
+          //บันทึกข้อมูล
+          dataResponse = await insertdataDepartmant(req.body, hashPW);
+        }
       } else {
-        //เข้ารหัสผ่าน
-        let hashPW = await bcrypt.hash(req.body.enc_password, 10);
-        //บันทึกข้อมูล
-        dataResponse = await insertdataDepartmant(req.body, hashPW);
+        dataResponse = "กรุณาระบุ username ที่มีคำว่า 'dpm'";
       }
 
       break;

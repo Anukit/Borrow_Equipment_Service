@@ -10,17 +10,12 @@ var GetData = {
     );
   },
 
-  getDataMemberAll: function (total_data, callback) {
-    return !total_data
-      ? db.query(
-          `SELECT id, rfid, username, firstname, lastname, telephone, gender, image_file, create_by, create_at, update_by, update_at,
+  getDataMemberAll: function (callback) {
+    return db.query(
+      `SELECT id, rfid, username, firstname, lastname, telephone, gender, image_file, create_by, create_at, update_by, update_at,
        active FROM member WHERE active = 1`,
-          callback
-        )
-      : db.query(
-          `SELECT id AS member_id FROM member WHERE active = 1 ORDER BY update_at DESC`,
-          callback
-        );
+      callback
+    );
   },
 
   getDataEquip: function (rfid, callback) {
@@ -32,85 +27,136 @@ var GetData = {
     );
   },
 
-  getDataEquipAll: function (total_data, callback) {
-    return !total_data
-      ? db.query(
-          `SELECT id, rfid, equipment_name, brand, model, equipment_number, serial_number, description, create_by, 
-      create_at, update_by, update_at, active FROM equipment WHERE active = 1 ORDER BY update_at DESC`,
-          callback
-        )
-      : db.query(
-          `SELECT id AS equip_id FROM equipment WHERE active = 1 ORDER BY update_at DESC`,
-          callback
-        );
-  },
-
-  getDataEquipRemain: function (equipID, total_data, callback) {
+  getDataEquipAll: function (callback) {
     return db.query(
       `SELECT id, rfid, equipment_name, brand, model, equipment_number, serial_number, description, create_by, 
-      create_at, update_by, update_at, active FROM equipment WHERE id = ? AND active = 1`,
-      [equipID],
+      create_at, update_by, update_at, active FROM equipment WHERE active = 1 ORDER BY update_at DESC`,
       callback
     );
   },
 
-  getDataBorrowing: function (total_data, callback) {
-    return !total_data
-      ? db.query(
-          `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, c.brand, c.model, a.borrow_date 
+  getDataEquipRemainAll: function (callback) {
+    return db.query(
+      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
+      LEFT JOIN reports ON equipment.id = reports.equipment_id
+      WHERE (reports.status = 1 OR
+      NOT EXISTS
+      (
+      SELECT * FROM reports
+      WHERE equipment.id = reports.equipment_id
+      )) 
+			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
+      callback
+    );
+  },
+
+  // getDataEquipRemain: function (equipID, callback) {
+  //   return db.query(
+  //     `SELECT id, rfid, equipment_name, brand, model, equipment_number, serial_number, description, create_by,
+  //     create_at, update_by, update_at, active FROM equipment WHERE id = ? AND active = 1`,
+  //     [equipID],
+  //     callback
+  //   );
+  // },
+
+  getDataBorrowing: function (callback) {
+    return db.query(
+      `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, c.brand, c.model, a.borrow_date 
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
       WHERE a.status = 0 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC`,
-          callback
-        )
-      : db.query(
-          `SELECT a.id AS report_id, c.id AS equip_id, b.id AS depart_id FROM reports as a 
-          JOIN member as b ON a.member_id = b.id
-          JOIN equipment as c ON a.equipment_id = c.id
-          WHERE a.status = 0 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC`,
-          callback
-        );
+      callback
+    );
   },
 
-  getDataReverting: function (total_data, callback) {
-    return !total_data
-      ? db.query(
-          `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, c.brand, c.model, a.return_date 
+  getDataReverting: function (callback) {
+    return db.query(
+      `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, c.brand, c.model, a.return_date 
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
       WHERE a.status = 1 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.return_date DESC`,
-          callback
-        )
-      : db.query(
-          `SELECT a.id AS report_id, b.id AS member_id, c.id AS equip_id FROM reports as a 
-          JOIN member as b ON a.member_id = b.id
-          JOIN equipment as c ON a.equipment_id = c.id
-          WHERE a.status = 1 AND a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.return_date DESC`,
-          callback
-        );
+      callback
+    );
   },
 
-  getDataReport: function (total_data, callback) {
-    return !total_data
-      ? db.query(
+  searchDataEquipRemain: function (search_value, callback) {
+    return db.query(
+      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
+      LEFT JOIN reports ON equipment.id = reports.equipment_id
+      WHERE (reports.status = 1 OR
+      NOT EXISTS
+      (
+      SELECT * FROM reports
+      WHERE equipment.id = reports.equipment_id
+      )) AND (equipment.equipment_name = ? OR equipment.brand = ? OR equipment.model = ?)
+			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
+      [search_value, search_value, search_value],
+      callback
+    );
+  },
+
+  SearchDataReport: function (data, callback) {
+    let typeSearch = data.typeSearch;
+    return db.query(
+      ///////////////////////////////////////////////////////////ทั้งหมด////////////////////////////////////////////////////////////////////////////////////
+      typeSearch == 0
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, d.department_name, a.status
+      FROM reports as a 
+      JOIN member as b ON a.member_id = b.id
+      JOIN equipment as c ON a.equipment_id = c.id
+      LEFT JOIN department as d ON a.used_department_id = d.id
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC, a.return_date DESC`
+        : ////////////////////////////////////////////////////ทั้งหมด Search////////////////////////////////////////////////////////////////////////////////////
+        typeSearch == 1
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, d.department_name, a.status
+      FROM reports as a 
+      JOIN member as b ON a.member_id = b.id
+      JOIN equipment as c ON a.equipment_id = c.id
+			LEFT JOIN department as d ON a.used_department_id = d.id
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+			ORDER BY a.borrow_date DESC, a.return_date DESC`
+        : /////////////////////////////////////////////////////ยืม/////////////////////////////////////////////////////////////////////////////////////////
+        typeSearch == 2
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, d.department_name, a.status
+      FROM reports as a 
+      JOIN member as b ON a.member_id = b.id
+      JOIN equipment as c ON a.equipment_id = c.id
+			LEFT JOIN department as d ON a.used_department_id = d.id
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 0 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+			ORDER BY a.borrow_date DESC, a.return_date DESC`
+        : //////////////////////////////////////////////////////คืน///////////////////////////////////////////////////////////////////////////////////////////
           `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, d.department_name, a.status
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
 			LEFT JOIN department as d ON a.used_department_id = d.id
-      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC, a.return_date DESC`,
-          callback
-        )
-      : db.query(
-          `SELECT a.id AS report_id, b.id AS member_id, c.id AS equip_id FROM reports as a 
-          JOIN member as b ON a.member_id = b.id
-          JOIN equipment as c ON a.equipment_id = c.id
-          LEFT JOIN department as d ON a.used_department_id = d.id
-          WHERE a.active = 1 AND b.active = 1 AND c.active = 1 ORDER BY a.borrow_date DESC, a.return_date DESC `,
-          callback
-        );
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 1 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+			ORDER BY a.borrow_date DESC, a.return_date DESC`,
+      [data.firstDate, data.untilDate, data.firstDate, data.untilDate],
+      callback
+    );
+  },
+
+  searchDataMember: function (search_value, callback) {
+    return db.query(
+      `SELECT id, rfid, username, firstname, lastname, telephone, gender, image_file, create_by, create_at, update_by, update_at,
+      active FROM member WHERE active = 1 AND (firstname = ? OR lastname = ? OR username = ? OR telephone = ?)
+      ORDER BY update_at DESC`,
+      [search_value, search_value, search_value, search_value],
+      callback
+    );
+  },
+
+  searchDataEquip: function (search_value, callback) {
+    return db.query(
+      `SELECT id, rfid, equipment_name, brand, model, equipment_number, serial_number, description, create_by, 
+      create_at, update_by, update_at, active FROM equipment 
+			WHERE active = 1 AND (equipment_name = ? OR equipment_number = ? OR brand = ?) ORDER BY update_at DESC`,
+      [search_value, search_value, search_value],
+      callback
+    );
   },
 };
 module.exports = GetData;

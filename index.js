@@ -29,7 +29,6 @@ var DeleteData = require("./routers/DeleteData");
 var GetData = require("./routers/GetData");
 var Borrowing = require("./routers/Borrowing");
 var Reverting = require("./routers/Reverting");
-var Search = require("./routers/Search");
 var Notification = require("./routers/Notification");
 var SetData = require("./routers/SetData");
 
@@ -43,7 +42,6 @@ app.use("/DeleteData", DeleteData);
 app.use("/GetData", GetData);
 app.use("/Borrowing", Borrowing);
 app.use("/Reverting", Reverting);
-app.use("/Search", Search);
 app.use("/SetData", SetData);
 
 app.use(express.static("uploads")); //สำหรับโชว์รูปภาพใน service

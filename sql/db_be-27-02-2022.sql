@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 23, 2022 at 06:02 AM
+-- Generation Time: Feb 27, 2022 at 05:12 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -42,6 +42,13 @@ CREATE TABLE `admin` (
   `active` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`id`, `username`, `enc_password`, `firstname`, `lastname`, `telephone`, `gender`, `create_by`, `create_at`, `update_by`, `update_at`, `active`) VALUES
+(1, 'admin1', '$2b$10$2RW6hUI/lW1GPY5yn7zZTOHixLgnTfp18JzHY0xvIv.5TkJ43J9BW', 'พิเชษ', 'ลิ่วสุดยอด', '0999999999', '0', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -66,7 +73,7 @@ CREATE TABLE `department` (
 --
 
 INSERT INTO `department` (`id`, `username`, `enc_password`, `department_name`, `description`, `create_by`, `create_at`, `update_by`, `update_at`, `active`) VALUES
-(1, 'depart1', '$2b$10$RfKN/EsdkaUXkTt1pWJ93.QPKD0mYM7tBCZSX7rjDGwxHFWhOSBXq', 'test1', 'test', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
+(1, 'dpm1', '$2b$10$eNLBdOj9xDofljZ4WvPhA.lPDXX78.9fKp3tYRI/jnQzFTDhl44nW', 'ฉุกเฉิน', 'ห้องฉุกเฉิน', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
 
 -- --------------------------------------------------------
 
@@ -95,9 +102,7 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`id`, `rfid`, `equipment_name`, `brand`, `model`, `equipment_number`, `serial_number`, `description`, `create_by`, `create_at`, `update_by`, `update_at`, `active`) VALUES
-(1, '1', 'test', 'test', 'test1234', '1', '1', 'test', '1', '2022-01-28 11:27:16', '1', '2022-01-27 11:27:16', 1),
-(2, '2', 'test', 'test', 'test1234', '2', '2', 'test', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1),
-(3, '3', 'test', 'test1', 'test12345', '3', '3', 'test', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
+(1, '1234567890', 'เครืองให้สารละลายทางหลอดเลือดดํา', 'Terumo', 'TE835', '12345', '123456', 'อุปกรณ์', '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
 
 -- --------------------------------------------------------
 
@@ -127,9 +132,7 @@ CREATE TABLE `member` (
 --
 
 INSERT INTO `member` (`id`, `rfid`, `username`, `enc_password`, `firstname`, `lastname`, `telephone`, `gender`, `image_file`, `create_by`, `create_at`, `update_by`, `update_at`, `active`) VALUES
-(1, '1', '1', '$2b$10$yv2GSlpGgvRZRTOMR./.gOflf.4LqKA1FvQDxRfD50s3lZTJLFJrS', 'test', 'test', '0888888888', '0', NULL, '1', '2022-01-28 11:27:16', '1', '2022-02-11 11:27:16', 1),
-(2, '2', '2', '$2b$10$8S0OwyzxEHIOSYok6pBBOOLSoC/ROtUqGRg93bkntSR9BmlVbIrfW', 'test1', 'test1', '0999999999', '0', NULL, '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1),
-(3, '3', '3', '$2b$10$HbXAp0ZSm0xYiw.9IVczmOvDKSf4TPTnaTodz5XON/DoyhnET.Ulm', 'test', 'test', '0999999999', '0', NULL, '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
+(1, '0123456789', '1478523690', '$2b$10$gsS8Cvo0yN4smE4SgfOliuVsE3rT3zG2tad22LiI1RzOrtnDXiVoS', 'อนุกฤษณ์', 'สุดยอด', '0888888888', '0', NULL, '1', '2022-01-28 11:27:16', '1', '2022-01-28 11:27:16', 1);
 
 -- --------------------------------------------------------
 
@@ -144,15 +147,7 @@ CREATE TABLE `notification` (
   `create_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `update_at` datetime NOT NULL,
   `active` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `notification`
---
-
-INSERT INTO `notification` (`id`, `report_id`, `read_noti`, `create_at`, `update_at`, `active`) VALUES
-(1, 5, 1, '2022-02-23 05:00:37', '2022-02-23 12:00:37', 1),
-(2, 1, 0, '2022-02-22 14:11:03', '2022-02-22 21:11:03', 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -178,9 +173,7 @@ CREATE TABLE `reports` (
 --
 
 INSERT INTO `reports` (`id`, `member_id`, `equipment_id`, `status`, `used_department_id`, `admin_approve_borrow`, `borrow_date`, `admin_approve_return`, `return_date`, `active`) VALUES
-(1, '1', '2', '0', '1', '1', '2022-02-22 09:27:16', NULL, NULL, 1),
-(2, '2', '1', '1', NULL, '1', '2022-02-22 16:27:16', '2', '2022-02-11 11:27:16', 1),
-(5, '3', '3', '0', NULL, '1', '2022-02-22 09:27:16', NULL, NULL, 1);
+(1, '1', '1', '0', NULL, '1', '2022-02-12 11:27:16', NULL, NULL, 1);
 
 --
 -- Indexes for dumped tables
@@ -242,25 +235,25 @@ ALTER TABLE `department`
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `member`
 --
 ALTER TABLE `member`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'genarate by base', AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

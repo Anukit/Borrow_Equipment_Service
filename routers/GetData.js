@@ -1,12 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const GetData = require("../models/GetData");
-const Utility = require("../controllers/Utility");
 
-//แสดงข้อมูล Member ตาม RFID
-router.get("/DataMember/:rfid", async function (req, res) {
-  let rfid = req.params.rfid;
-  let dataMember = await getDataMember(rfid);
+//แสดงข้อมูล Member
+router.post("/DataMember", async function (req, res) {
+  let rfid = req.body.rfid;
+  let search_value = req.body.search_value;
+  let dataMember;
+  if (rfid != "") {
+    dataMember = await getDataMember(rfid);
+  } else if (search_value != "") {
+    dataMember = await searchDataMember(search_value);
+  } else {
+    dataMember = await getDataMemberAll();
+  }
+
   if (dataMember != null) {
     if (dataMember.length > 0) {
       res.json({ status: "Succeed", data: dataMember });
@@ -18,31 +26,19 @@ router.get("/DataMember/:rfid", async function (req, res) {
   }
 });
 
-//แสดงข้อมูล Member ทั้งหมดในตาราง
-router.get("/DataMemberAll", async function (req, res) {
-  let dataMemberCount = await getDataMemberAll(true);
-  let dataMemberAll = await getDataMemberAll(false);
-  if (dataMemberAll != null) {
-    if (dataMemberAll.length > 0 && dataMemberCount.length > 0) {
-      res.json({
-        status: "Succeed",
-        data: {
-          iTotalRecords: dataMemberCount.length,
-          aaData: dataMemberAll,
-        },
-      });
-    } else {
-      res.json({ status: "Succeed", data: "No user information" });
-    }
+//แสดงข้อมูล Equipment
+router.post("/DataEquip", async function (req, res) {
+  let rfid = req.body.rfid;
+  let search_value = req.body.search_value;
+  let dataEquip;
+  if (rfid != "") {
+    dataEquip = await getDataEquip(rfid);
+  } else if (search_value != "") {
+    dataEquip = await searchDataEquip(search_value);
   } else {
-    res.json({ status: "Failed", data: "Error" });
+    dataEquip = await getDataEquipAll();
   }
-});
 
-//แสดงข้อมูล Equipment ตาม RFID
-router.get("/DataEquip/:rfid", async function (req, res) {
-  let rfid = req.params.rfid;
-  let dataEquip = await getDataEquip(rfid);
   if (dataEquip != null) {
     if (dataEquip.length > 0) {
       res.json({ status: "Succeed", data: dataEquip });
@@ -54,67 +50,19 @@ router.get("/DataEquip/:rfid", async function (req, res) {
   }
 });
 
-//แสดงข้อมูล Equipment ทั้งหมดในตาราง
-router.get("/DataEquipAll", async function (req, res) {
-  let dataEquipCount = await getDataEquipAll(true);
-  let dataEquipAll = await getDataEquipAll(false);
-  if (dataEquipAll != null) {
-    if (dataEquipAll.length > 0 && dataEquipCount.length) {
-      res.json({
-        status: "Succeed",
-        data: {
-          iTotalRecords: dataEquipCount.length,
-          aaData: dataEquipAll,
-        },
-      });
-    } else {
-      res.json({ status: "Succeed", data: "No Equip information" });
-    }
-  } else {
-    res.json({ status: "Failed", data: "Error" });
-  }
-});
-
 //แสดงข้อมูล Equipment ที่คงเหลือในตาราง
-router.get("/DataEquipRemain", async function (req, res) {
-  let listIDEquip = [];
-  let listDataEquip = [];
-  let borrowData = await getDataBorrowing(true);
-  let equipdata = await getDataEquipAll(true);
+router.post("/DataEquipRemain", async function (req, res) {
+  let search_value = req.body.search_value;
+  let equipdata;
 
-  if (borrowData != null && equipdata != null) {
-    let listIDEquip = equipdata;
-    let listBorrow = [];
-
-    for (let i = 0; i < equipdata.length; i++) {
-      for (let y = 0; y < borrowData.length; y++) {
-        if (equipdata[i]["equip_id"] == borrowData[y]["equip_id"]) {
-          listBorrow.push(equipdata[i]["equip_id"]);
-        }
-      }
-    }
-
-    for (let index = 0; index < equipdata.length; index++) {
-      for (let x = 0; x < listBorrow.length; x++) {
-        if (equipdata[index]["equip_id"] == listBorrow[x]) {
-          listIDEquip.splice(index, 1);
-        }
-      }
-    }
-    for (let index = 0; index < listIDEquip.length; index++) {
-      let dataEquipRemain = await Utility.getDataEquipRemain(
-        listIDEquip[index]["equip_id"],
-        false
-      );
-      if (dataEquipRemain != null) {
-        listDataEquip.push(dataEquipRemain[0]);
-      } else {
-        res.json({ status: "Failed", data: "Error" });
-      }
-    }
-
-    if (listDataEquip.length > 0) {
-      res.json({ status: "Succeed", data: listDataEquip });
+  if (search_value == "") {
+    equipdata = await getDataEquipRemainAll();
+  } else {
+    equipdata = await searchDataEquipRemain(search_value);
+  }
+  if (equipdata != null) {
+    if (equipdata.length > 0) {
+      res.json({ status: "Succeed", data: equipdata });
     } else {
       res.json({ status: "Failed", data: "No Equip information" });
     }
@@ -124,17 +72,13 @@ router.get("/DataEquipRemain", async function (req, res) {
 });
 
 //แสดงข้อมูลการยืม
-router.get("/DataBorrowing", async function (req, res) {
-  let dataBorrowCount = await getDataBorrowing(true);
-  let dataBorrowing = await getDataBorrowing(false);
+router.post("/DataBorrowing", async function (req, res) {
+  let dataBorrowing = await getDataBorrowing();
   if (dataBorrowing != null) {
-    if (dataBorrowing.length > 0 && dataBorrowCount.length > 0) {
+    if (dataBorrowing.length > 0) {
       res.json({
         status: "Succeed",
-        data: {
-          iTotalRecords: dataBorrowCount.length,
-          aaData: dataBorrowing,
-        },
+        data: dataBorrowing,
       });
     } else {
       res.json({ status: "Succeed", data: "No Borrowing information" });
@@ -145,17 +89,13 @@ router.get("/DataBorrowing", async function (req, res) {
 });
 
 //แสดงข้อมูลการคืน
-router.get("/DataReverting", async function (req, res) {
-  let dataRevertCount = await Utility.getDataReverting(true);
-  let dataReverting = await Utility.getDataReverting(false);
+router.post("/DataReverting", async function (req, res) {
+  let dataReverting = await getDataReverting();
   if (dataReverting != null) {
-    if (dataReverting.length > 0 && dataRevertCount.length > 0) {
+    if (dataReverting.length > 0) {
       res.json({
         status: "Succeed",
-        data: {
-          iTotalRecords: dataRevertCount.length,
-          aaData: dataReverting,
-        },
+        data: dataReverting,
       });
     } else {
       res.json({ status: "Succeed", data: "No Reverting information" });
@@ -166,23 +106,24 @@ router.get("/DataReverting", async function (req, res) {
 });
 
 //แสดงข้อมูลรายงาน
-router.get("/DataReport", async function (req, res) {
-  let dataReportCount = await getDataReport(true);
-  let dataDataReport = await getDataReport(false);
-  if (dataDataReport != null) {
-    if (dataDataReport.length > 0 && dataReportCount.length > 0) {
-      res.json({
-        status: "Succeed",
-        data: {
-          iTotalRecords: dataReportCount.length,
-          aaData: dataDataReport,
-        },
-      });
+router.post("/DataReport", async function (req, res, next) {
+  let typeSearch = req.body.typeSearch;
+  var typeSearchList = ["0", "1", "2", "3"];
+
+  if (typeSearchList.includes(typeSearch)) {
+    let dataReport = await SearchDataReport(req.body);
+
+    if (dataReport != null) {
+      if (dataReport.length > 0) {
+        res.json({ status: "Succeed", data: dataReport });
+      } else {
+        res.json({ status: "Failed", data: "No Report information" });
+      }
     } else {
-      res.json({ status: "Succeed", data: "No DataReport information" });
+      res.json({ status: "Failed", data: "Error" });
     }
   } else {
-    res.json({ status: "Failed", data: "Error" });
+    res.json({ status: "Failed", data: "กำหนด typeSearch ระหว่าง 0-3" });
   }
 });
 
@@ -203,10 +144,44 @@ async function getDataMember(rfid) {
   });
 }
 
-async function getDataMemberAll(total_data) {
+async function searchDataMember(search_value) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataMemberAll(total_data, (err, rows) => {
+      GetData.searchDataMember(search_value, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(false);
+    }
+  });
+}
+
+async function getDataMemberAll() {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.getDataMemberAll((err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function getDataEquipRemain(equipID) {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.getDataEquipRemain(equipID, (err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -237,10 +212,10 @@ async function getDataEquip(rfid) {
   });
 }
 
-async function getDataEquipAll(total_data) {
+async function getDataEquipAll() {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataEquipAll(total_data, (err, rows) => {
+      GetData.getDataEquipAll((err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -254,32 +229,10 @@ async function getDataEquipAll(total_data) {
   });
 }
 
-// async function getDataEquipRemain(indexPage, equipID, total_data) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       GetData.getDataEquipRemain(
-//         indexPage,
-//         equipID,
-//         total_data,
-//         (err, rows) => {
-//           if (rows != null) {
-//             resolve(rows);
-//           } else {
-//             resolve(null);
-//           }
-//         }
-//       );
-//     } catch (err) {
-//       console.log(err);
-//       resolve(null);
-//     }
-//   });
-// }
-
-async function getDataBorrowing(total_data) {
+async function getDataEquipRemainAll() {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataBorrowing(total_data, (err, rows) => {
+      GetData.getDataEquipRemainAll((err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {
@@ -293,27 +246,78 @@ async function getDataBorrowing(total_data) {
   });
 }
 
-// async function getDataReverting(indexPage, total_data) {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       GetData.getDataReverting(indexPage, total_data, (err, rows) => {
-//         if (rows != null) {
-//           resolve(rows);
-//         } else {
-//           resolve(null);
-//         }
-//       });
-//     } catch (err) {
-//       console.log(err);
-//       resolve(null);
-//     }
-//   });
-// }
-
-async function getDataReport(total_data) {
+async function searchDataEquip(search_value) {
   return new Promise((resolve, reject) => {
     try {
-      GetData.getDataReport(total_data, (err, rows) => {
+      GetData.searchDataEquip(search_value, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(false);
+    }
+  });
+}
+
+async function searchDataEquipRemain(search_value) {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.searchDataEquipRemain(search_value, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function getDataReverting() {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.getDataReverting((err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function SearchDataReport(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.SearchDataReport(data, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(false);
+    }
+  });
+}
+
+async function getDataBorrowing() {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.getDataBorrowing((err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {

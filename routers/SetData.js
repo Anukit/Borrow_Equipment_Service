@@ -12,18 +12,30 @@ router.post("/setReadNoti", async function (req, res) {
   } else {
     res.json({ status: "Failed", data: "Error" });
   }
-  module.exports = router;
 });
 
 //อัปเดตอุปกรณ์ว่าอยู่ที่แผนกไหน ในหน้าแผนก
 router.post("/setDpmID", async function (req, res) {
-  let statusSetDpm = await setDpmID(req.body);
-  if (statusSetDpm != null) {
-    res.json({ status: "Succeed", data: "Set dpm to report succeed" });
+  if (req.body.rfid != "") {
+    let statusSetDpm = await setDpmID(req.body);
+    if (statusSetDpm != null) {
+      let dataEquipDepart = await getEquipDepart(req.body);
+      if (dataEquipDepart != null) {
+        res.json({ status: "Succeed", data: dataEquipDepart });
+      } else {
+        res.json({ status: "Failed", data: "Error" });
+      }
+    } else {
+      res.json({ status: "Failed", data: "Error" });
+    }
   } else {
-    res.json({ status: "Failed", data: "Error" });
+    let dataEquipDepart = await getEquipDepart(req.body);
+    if (dataEquipDepart != null) {
+      res.json({ status: "Succeed", data: dataEquipDepart });
+    } else {
+      res.json({ status: "Failed", data: "Error" });
+    }
   }
-  module.exports = router;
 });
 
 async function setReadNoti(reportID) {
@@ -53,6 +65,23 @@ async function setDpmID(data) {
           resolve(null);
         } else {
           resolve(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function getEquipDepart(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      SetData.getEquipDepart(data, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
         }
       });
     } catch (err) {

@@ -127,6 +127,23 @@ router.post("/DataReport", async function (req, res, next) {
   }
 });
 
+//แสดงข้อมูลการแจ้งเตือน
+router.post("/DataNoti", async function (req, res) {
+  let dataNoti = await getDataNoti();
+  if (dataNoti != null) {
+    if (dataNoti.length > 0) {
+      res.json({
+        status: "Succeed",
+        data: dataNoti,
+      });
+    } else {
+      res.json({ status: "Succeed", data: "No notification information" });
+    }
+  } else {
+    res.json({ status: "Failed", data: "Error" });
+  }
+});
+
 async function getDataMember(rfid) {
   return new Promise((resolve, reject) => {
     try {
@@ -267,6 +284,7 @@ async function searchDataEquipRemain(search_value) {
   return new Promise((resolve, reject) => {
     try {
       GetData.searchDataEquipRemain(search_value, (err, rows) => {
+        console.log(err);
         if (rows != null) {
           resolve(rows);
         } else {
@@ -318,6 +336,23 @@ async function getDataBorrowing() {
   return new Promise((resolve, reject) => {
     try {
       GetData.getDataBorrowing((err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function getDataNoti() {
+  return new Promise((resolve, reject) => {
+    try {
+      GetData.getDataNoti((err, rows) => {
         if (rows != null) {
           resolve(rows);
         } else {

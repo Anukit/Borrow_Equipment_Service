@@ -44,7 +44,8 @@ var GetData = {
       (
       SELECT * FROM reports
       WHERE equipment.id = reports.equipment_id
-      )) 
+      ))
+      AND equipment.active = 1 
 			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
       callback
     );
@@ -91,6 +92,7 @@ var GetData = {
       SELECT * FROM reports
       WHERE equipment.id = reports.equipment_id
       )) AND (equipment.equipment_name LIKE '%${search_value}%' OR equipment.brand LIKE '%${search_value}%' OR equipment.model LIKE '%${search_value}%')
+      AND equipment.active = 1
 			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
       // [search_value, search_value, search_value],
       callback

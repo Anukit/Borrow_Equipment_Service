@@ -128,7 +128,7 @@ var EditData = {
     return db.query(
       password != ""
         ? `UPDATE member SET rfid= ?, username= ?, enc_password= ?, firstname= ?, lastname= ?, telephone= ? , gender= ?, update_by= ?, update_at= ?, active= 1 WHERE id = ? AND active= 1`
-        : `UPDATE member SET rfid= ?, username= ?, enc_password= (SELECT enc_password FROM member WHERE id = ?), firstname= ?, lastname= ?, telephone= ? , gender= ?, 
+        : `UPDATE member SET rfid= ?, username= ?, enc_password= "(SELECT enc_password FROM member WHERE id = ?)", firstname= ?, lastname= ?, telephone= ? , gender= ?, 
         update_by= ?, update_at= ?, active= 1 WHERE id = ? AND active= 1`,
       [
         rfid,

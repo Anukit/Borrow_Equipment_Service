@@ -46,7 +46,7 @@ app.use("/SetData", SetData);
 
 app.use(express.static("uploads")); //สำหรับโชว์รูปภาพใน service
 
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 io.on("connection", function (client) {
   console.log("Client connected..");

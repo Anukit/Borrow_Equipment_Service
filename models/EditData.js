@@ -70,7 +70,7 @@ var EditData = {
     return db.query(
       password != ""
         ? `UPDATE admin SET username= ? , enc_password= ?, firstname= ? , lastname= ? , telephone= ? ,gender= ?, update_by= ?, update_at=?, active= 1 WHERE id = ? AND active= 1`
-        : `UPDATE admin SET username= ? , enc_password= (SELECT enc_password FROM admin WHERE id = ?), firstname= ? , lastname= ? , telephone= ? ,gender= ?, 
+        : `UPDATE admin SET username= ? , enc_password= (SELECT epw  FROM (SELECT enc_password as epw FROM admin WHERE id = ?) as x), firstname= ? , lastname= ? , telephone= ? ,gender= ?, 
         update_by= ?, update_at=?, active= 1 WHERE id = ? AND active= 1`,
       [
         username,
@@ -99,7 +99,7 @@ var EditData = {
     return db.query(
       password != ""
         ? `UPDATE department SET username= ?, enc_password= ?, department_name= ?, description= ?, update_by= ?, update_at= ?,active= 1 WHERE id = ? AND active= 1`
-        : `UPDATE department SET username= ?, enc_password= (SELECT enc_password FROM department WHERE id = ?), department_name= ?, description= ?, update_by= ?, 
+        : `UPDATE department SET username= ?, enc_password= (SELECT epw  FROM (SELECT enc_password as epw FROM department WHERE id = ?) as x), department_name= ?, description= ?, update_by= ?, 
       update_at= ?,active= 1 WHERE id = ? AND active= 1`,
       [
         username,
@@ -128,7 +128,7 @@ var EditData = {
     return db.query(
       password != ""
         ? `UPDATE member SET rfid= ?, username= ?, enc_password= ?, firstname= ?, lastname= ?, telephone= ? , gender= ?, update_by= ?, update_at= ?, active= 1 WHERE id = ? AND active= 1`
-        : `UPDATE member SET rfid= ?, username= ?, enc_password= (SELECT enc_password FROM member WHERE id = ?), firstname= ?, lastname= ?, telephone= ? , gender= ?, 
+        : `UPDATE member SET rfid= ?, username= ?, enc_password = (SELECT epw FROM (SELECT enc_password as epw FROM member WHERE id = ?) as x), firstname= ?, lastname= ?, telephone= ? , gender= ?, 
         update_by= ?, update_at= ?, active= 1 WHERE id = ? AND active= 1`,
       [
         rfid,

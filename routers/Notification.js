@@ -8,7 +8,7 @@ exports.sendNoti = async () => {
     //วันที่ปัจจุบัน
     let today = new Date();
     let dateNow = await convertUTCDateToLocalDate(today);
-    checkDateBor.setHours(checkDateBor.getHours() + 7);
+    dateNow.setHours(dateNow.getHours() + 7);
     //วันที่ยืม
     let checkDateBor = await convertUTCDateToLocalDate(
       dataReport[i]["borrow_date"]

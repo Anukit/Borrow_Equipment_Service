@@ -15,10 +15,6 @@ app.use(
   })
 );
 
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
-});
-
 //require routes
 var CheckAPI = require("./routers/CheckAPI");
 var Register = require("./routers/Register");

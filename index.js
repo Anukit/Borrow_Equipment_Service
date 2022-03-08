@@ -16,7 +16,7 @@ app.use(
 );
 
 //require routes
-var CheckAPI = require("./routers/CheckAPI");
+var CheckAPI = require("./routers/CheckApi");
 var Register = require("./routers/Register");
 var UploadFiles = require("./routers/UploadFiles");
 var Login = require("./routers/Login");

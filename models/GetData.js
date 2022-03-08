@@ -127,7 +127,7 @@ var GetData = {
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
 			LEFT JOIN department as d ON a.used_department_id = d.id
-      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 0 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 0 AND (borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?)
 			ORDER BY a.update_at DESC`
         : //////////////////////////////////////////////////////คืน///////////////////////////////////////////////////////////////////////////////////////////
           `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
@@ -135,7 +135,7 @@ var GetData = {
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
 			LEFT JOIN department as d ON a.used_department_id = d.id
-      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 1 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 1 AND (borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?)
 			ORDER BY a.update_at DESC`,
       [data.firstDate, data.untilDate, data.firstDate, data.untilDate],
       callback

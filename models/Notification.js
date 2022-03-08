@@ -24,7 +24,7 @@ var Notification = {
 
   insertDataNoti: function (reportID, callback) {
     return db.query(
-      `INSERT INTO notification(report_id, read_noti, create_at, update_at, active) VALUES (?, 0, now(), now(), 1)`,
+      `INSERT INTO notification(report_id, read_noti, create_at, update_at, active) VALUES (?, 0, DATE_ADD(now(), INTERVAL +7 HOUR), DATE_ADD(now(), INTERVAL +7 HOUR), 1)`,
       [reportID],
       callback
     );
@@ -32,7 +32,7 @@ var Notification = {
 
   updateDateSendNoti: function (NotiID, callback) {
     return db.query(
-      `UPDATE notification SET update_at = now(), active= 1 WHERE id = ? AND active = 1`,
+      `UPDATE notification SET update_at = DATE_ADD(now(), INTERVAL +7 HOUR), active= 1 WHERE id = ? AND active = 1`,
       [NotiID],
       callback
     );
@@ -40,7 +40,7 @@ var Notification = {
 
   setReadNoti: function (reportID, callback) {
     return db.query(
-      `UPDATE notification SET read_noti = 1, update_at = now(), active= 1 WHERE report_id = ? AND active = 1`,
+      `UPDATE notification SET read_noti = 1, update_at = DATE_ADD(now(), INTERVAL +7 HOUR), active= 1 WHERE report_id = ? AND active = 1`,
       [reportID],
       callback
     );

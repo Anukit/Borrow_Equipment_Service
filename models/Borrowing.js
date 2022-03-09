@@ -1,6 +1,13 @@
 const db = require("../dbconnection");
 
-var GetData = {
+var Borrowing = {
+  checkBorrowSame: function (data, callback) {
+    return db.query(
+      `SELECT COUNT(id) as id FROM reports WHERE equipment_id = ? AND status = 0`,
+      [data.equipment_id],
+      callback
+    );
+  },
   insertDataBorrow: function (data, callback) {
     return db.query(
       `INSERT INTO reports(member_id, equipment_id, status, admin_approve_borrow, borrow_date, create_at, update_at, active) 
@@ -17,4 +24,4 @@ var GetData = {
     );
   },
 };
-module.exports = GetData;
+module.exports = Borrowing;

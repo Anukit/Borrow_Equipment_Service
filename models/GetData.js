@@ -39,7 +39,7 @@ var GetData = {
     return db.query(
       `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
       LEFT JOIN reports ON equipment.id = reports.equipment_id
-      WHERE ((reports.status = 1 AND reports.return_date != null) OR
+      WHERE ((reports.status = 1 AND reports.return_date is not null) OR
       NOT EXISTS
       (
       SELECT * FROM reports
@@ -86,7 +86,7 @@ var GetData = {
     return db.query(
       `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
       LEFT JOIN reports ON equipment.id = reports.equipment_id
-      WHERE ((reports.status = 1 AND reports.return_date != null) OR
+      WHERE ((reports.status = 1 AND reports.return_date is not null) OR
       NOT EXISTS
       (
       SELECT * FROM reports

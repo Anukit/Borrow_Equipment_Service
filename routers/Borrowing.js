@@ -1,13 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const Borrowing = require("../models/Borrowing");
+const Utility = require("../controllers/Utility");
 
 router.post("/insertData", async function (req, res, next) {
-  let resBorrowing = await insertDataBorrow(req.body);
-  if (resBorrowing) {
-    res.json({ status: "Succeed", data: "Insert Pass" });
+  let resCheckBor = await Utility.checkBorrowSame(req.body);
+
+  if (resCheckBor[0]["id"] > 0) {
+    res.json({ status: "Failed", data: "Equip is borrowed" });
   } else {
-    res.json({ status: "Failed", data: "Insert Fail" });
+    let resBorrowing = await insertDataBorrow(req.body);
+    if (resBorrowing) {
+      res.json({ status: "Succeed", data: "Insert Pass" });
+    } else {
+      res.json({ status: "Failed", data: "Insert Fail" });
+    }
   }
 });
 

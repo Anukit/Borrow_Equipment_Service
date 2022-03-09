@@ -37,16 +37,24 @@ var GetData = {
 
   getDataEquipRemainAll: function (callback) {
     return db.query(
-      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
+      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model , COUNT(DISTINCT equipment.id) as total
+      FROM equipment
       LEFT JOIN reports ON equipment.id = reports.equipment_id
-      WHERE ((reports.status = 1 AND reports.return_date is not null) OR
+      WHERE (
       NOT EXISTS
       (
       SELECT * FROM reports
-      WHERE equipment.id = reports.equipment_id
-      ))
-      AND equipment.active = 1 
-			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
+      WHERE equipment.id = reports.equipment_id AND reports.active = 1
+      )
+     OR reports.id IN (
+       SELECT reports.id FROM reports 
+       WHERE reports.id IN (SELECT MAX(reports.id) FROM reports
+        WHERE reports.active = 1 GROUP BY reports.equipment_id ) 
+        AND reports.status = 1 
+       )
+      )
+      AND equipment.active = 1
+      GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
       callback
     );
   },
@@ -84,16 +92,24 @@ var GetData = {
 
   searchDataEquipRemain: function (search_value, callback) {
     return db.query(
-      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model, COUNT(*) as total FROM equipment
+      `SELECT DISTINCT equipment.equipment_name, equipment.brand, equipment.model , COUNT(DISTINCT equipment.id) as total
+      FROM equipment
       LEFT JOIN reports ON equipment.id = reports.equipment_id
-      WHERE ((reports.status = 1 AND reports.return_date is not null) OR
+      WHERE (
       NOT EXISTS
       (
       SELECT * FROM reports
-      WHERE equipment.id = reports.equipment_id
-      )) AND (equipment.equipment_name LIKE '%${search_value}%' OR equipment.brand LIKE '%${search_value}%' OR equipment.model LIKE '%${search_value}%')
+      WHERE equipment.id = reports.equipment_id AND reports.active = 1
+      )
+     OR reports.id IN (
+       SELECT reports.id FROM reports 
+       WHERE reports.id IN (SELECT MAX(reports.id) FROM reports
+        WHERE reports.active = 1 GROUP BY reports.equipment_id ) 
+        AND reports.status = 1 
+       )
+      ) AND (equipment.equipment_name LIKE '%${search_value}%' OR equipment.brand LIKE '%${search_value}%' OR equipment.model LIKE '%${search_value}%')
       AND equipment.active = 1
-			GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
+      GROUP BY equipment.equipment_name, equipment.brand, equipment.model`,
       // [search_value, search_value, search_value],
       callback
     );

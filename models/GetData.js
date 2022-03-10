@@ -120,7 +120,7 @@ var GetData = {
     return db.query(
       ///////////////////////////////////////////////////////////ทั้งหมด////////////////////////////////////////////////////////////////////////////////////
       typeSearch == 0
-        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number,  c.model, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
@@ -129,16 +129,16 @@ var GetData = {
       ORDER BY a.update_at DESC`
         : ////////////////////////////////////////////////////ทั้งหมด Search////////////////////////////////////////////////////////////////////////////////////
         typeSearch == 1
-        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number,  c.model, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
 			LEFT JOIN department as d ON a.used_department_id = d.id
-      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?
+      WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND (borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?)
 			ORDER BY a.update_at DESC`
         : /////////////////////////////////////////////////////ยืม/////////////////////////////////////////////////////////////////////////////////////////
         typeSearch == 2
-        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
+        ? `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number,  c.model, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id
@@ -146,7 +146,7 @@ var GetData = {
       WHERE a.active = 1 AND b.active = 1 AND c.active = 1 AND  a.status = 0 AND (borrow_date BETWEEN ? AND ? OR return_date BETWEEN ? AND ?)
 			ORDER BY a.update_at DESC`
         : //////////////////////////////////////////////////////คืน///////////////////////////////////////////////////////////////////////////////////////////
-          `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
+          `SELECT a.id, b.username, b.firstname, b.lastname, c.equipment_name, c.equipment_number,  c.model, a.return_date, a.borrow_date, a.update_at, d.department_name, a.status
       FROM reports as a 
       JOIN member as b ON a.member_id = b.id
       JOIN equipment as c ON a.equipment_id = c.id

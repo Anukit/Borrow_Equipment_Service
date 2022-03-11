@@ -3,7 +3,7 @@ const db = require("../dbconnection");
 var Borrowing = {
   checkBorrowSame: function (data, callback) {
     return db.query(
-      `SELECT COUNT(id) as id FROM reports WHERE equipment_id = ? AND status = 0`,
+      `SELECT COUNT(id) as id FROM reports WHERE equipment_id = ? AND status = 0 AND active = 1`,
       [data.equipment_id],
       callback
     );

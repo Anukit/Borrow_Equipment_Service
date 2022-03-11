@@ -50,7 +50,7 @@ var GetData = {
        SELECT reports.id FROM reports 
        WHERE reports.id IN (SELECT MAX(reports.id) FROM reports
         WHERE reports.active = 1 GROUP BY reports.equipment_id ) 
-        AND reports.status = 1 
+        AND reports.status = 1 AND reports.active = 1
        )
       )
       AND equipment.active = 1
@@ -105,7 +105,7 @@ var GetData = {
        SELECT reports.id FROM reports 
        WHERE reports.id IN (SELECT MAX(reports.id) FROM reports
         WHERE reports.active = 1 GROUP BY reports.equipment_id ) 
-        AND reports.status = 1 
+        AND reports.status = 1 AND reports.active = 1
        )
       ) AND (equipment.equipment_name LIKE '%${search_value}%' OR equipment.brand LIKE '%${search_value}%' OR equipment.model LIKE '%${search_value}%')
       AND equipment.active = 1

@@ -17,16 +17,32 @@ router.post("/setReadNoti", async function (req, res) {
 //อัปเดตอุปกรณ์ว่าอยู่ที่แผนกไหน ในหน้าแผนก
 router.post("/setDpmID", async function (req, res) {
   if (req.body.rfid != "") {
-    let statusSetDpm = await setDpmID(req.body);
-    if (statusSetDpm != null) {
-      let dataEquipDepart = await getEquipDepart(req.body);
-      if (dataEquipDepart != null) {
-        res.json({ status: "Succeed", data: dataEquipDepart });
+    //เช็คว่ามี Equipment ในระบบหรือไม่
+    let dataEquip = await checkEquipForDpm(req.body);
+    if (dataEquip.length > 0) {
+      //เช็คว่ามี Equipment ที่ถูกยืมแล้วหรือไม่
+      let statusCheckBor = await checkBorrowForDpm(dataEquip[0]["id"]);
+      if (statusCheckBor[0]["id"] > 0) {
+        let statusSetDpm = await setDpmID(req.body);
+        if (statusSetDpm != null) {
+          //ดึงข้อมูลแสดงตำแหน่ง หน้า DEpartment
+          let dataEquipDepart = await getEquipDepart(req.body);
+          if (dataEquipDepart != null) {
+            res.json({ status: "Succeed", data: dataEquipDepart });
+          } else {
+            res.json({ status: "Failed", data: "Error" });
+          }
+        } else {
+          res.json({ status: "Failed", data: "Error" });
+        }
       } else {
-        res.json({ status: "Failed", data: "Error" });
+        res.json({
+          status: "Failed",
+          data: "Equip is not borrowed or reverted",
+        });
       }
     } else {
-      res.json({ status: "Failed", data: "Error" });
+      res.json({ status: "Failed", data: "No Equip information" });
     }
   } else {
     let dataEquipDepart = await getEquipDepart(req.body);
@@ -47,6 +63,40 @@ async function setReadNoti(reportID) {
           resolve(null);
         } else {
           resolve(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function checkEquipForDpm(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      SetData.checkEquipForDpm(data, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      resolve(null);
+    }
+  });
+}
+
+async function checkBorrowForDpm(equipment_id) {
+  return new Promise((resolve, reject) => {
+    try {
+      SetData.checkBorrowForDpm(equipment_id, (err, rows) => {
+        if (rows != null) {
+          resolve(rows);
+        } else {
+          resolve(null);
         }
       });
     } catch (err) {

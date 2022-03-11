@@ -1,6 +1,20 @@
 const db = require("../dbconnection");
 
 var SetData = {
+  checkEquipForDpm: function (data, callback) {
+    return db.query(
+      `SELECT id FROM equipment WHERE rfid = ? AND active = 1`,
+      [data.rfid],
+      callback
+    );
+  },
+  checkBorrowForDpm: function (equipment_id, callback) {
+    return db.query(
+      `SELECT COUNT(id) as id FROM reports WHERE equipment_id = ? AND status = 0 AND active = 1`,
+      [equipment_id],
+      callback
+    );
+  },
   setDpmID: function (data, callback) {
     return db.query(
       `UPDATE reports SET used_department_id = ?, update_at = ? WHERE equipment_id = (SELECT id FROM equipment WHERE rfid = ? AND active = 1) AND status = 0 AND active = 1`,

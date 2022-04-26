@@ -15,8 +15,10 @@ router.post("/", (req, res) => {
       });
 
       if (fs.existsSync("./login.csv")) {
+        console.log("AAAA");
         //file exists
       } else {
+        console.log("BBBB");
         logger.write("user_id,user_type,login_date"); // append string to your file
       }
 

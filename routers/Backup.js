@@ -14,10 +14,10 @@ router.post("/", (req, res) => {
       if (fs.existsSync("./login.csv")) {
         //file exists.
         console.log("exist");
+
         let logger = fs.createWriteStream("login.csv", {
           flags: "a", // 'a' means appending (old data will be preserved)
         });
-
         let writeLine = (line) => logger.write(`\n${line}`);
 
         if (username.includes("admin")) {
@@ -27,13 +27,15 @@ router.post("/", (req, res) => {
         } else {
           writeLine(`${user_id},member,${login_date}`);
         }
+
         res.json({ status: "Succeed", data: "Succeed" });
       } else {
+        //file empty.
         console.log("empty");
+
         let logger = fs.createWriteStream("login.csv", {
           flags: "a", // 'a' means appending (old data will be preserved)
         });
-
         logger.write("user_id,user_type,login_date"); // append string to your file
         let writeLine = (line) => logger.write(`\n${line}`);
 
@@ -44,6 +46,7 @@ router.post("/", (req, res) => {
         } else {
           writeLine(`${user_id},member,${login_date}`);
         }
+
         res.json({ status: "Succeed", data: "Succeed" });
       }
     } catch (err) {
@@ -57,20 +60,28 @@ router.post("/", (req, res) => {
       let admin_id = req.body.admin_id;
       let edit_data = req.body.edit_data;
       let edit_date = req.body.edit_date;
-      let logger = fs.createWriteStream("edit_data.csv", {
-        flags: "a", // 'a' means appending (old data will be preserved)
-      });
 
       if (fs.existsSync("./edit_data.csv")) {
         //file exists
+        console.log("exists");
+
+        let logger = fs.createWriteStream("edit_data.csv", {
+          flags: "a", // 'a' means appending (old data will be preserved)
+        });
+        let writeLine = (line) => logger.write(`\n${line}`);
+        writeLine(`${admin_id},${edit_data},${edit_date}`);
+
+        res.json({ status: "Succeed", data: "Succeed" });
       } else {
+        //file empty.
+        console.log("empty");
+
         logger.write("admin_id,edit_data,edit_date"); // append string to your file
+        let writeLine = (line) => logger.write(`\n${line}`);
+        writeLine(`${admin_id},${edit_data},${edit_date}`);
+
+        res.json({ status: "Succeed", data: "Succeed" });
       }
-
-      let writeLine = (line) => logger.write(`\n${line}`);
-      writeLine(`${admin_id},${edit_data},${edit_date}`);
-
-      res.json({ status: "Succeed", data: "Succeed" });
     } catch (err) {
       //console.log(err);
       res.json({ status: "Failed", data: "Error Code" });

@@ -10,13 +10,14 @@ router.post("/", (req, res) => {
       let username = req.body.username;
       let user_id = req.body.user_id;
       let login_date = req.body.login_date;
-      let logger = fs.createWriteStream("login.csv", {
-        flags: "a", // 'a' means appending (old data will be preserved)
-      });
 
       if (fs.existsSync("./login.csv")) {
         //file exists.
         console.log("exist");
+        let logger = fs.createWriteStream("login.csv", {
+          flags: "a", // 'a' means appending (old data will be preserved)
+        });
+
         let writeLine = (line) => logger.write(`\n${line}`);
 
         if (username.includes("admin")) {
@@ -29,6 +30,10 @@ router.post("/", (req, res) => {
         res.json({ status: "Succeed", data: "Succeed" });
       } else {
         console.log("empty");
+        let logger = fs.createWriteStream("login.csv", {
+          flags: "a", // 'a' means appending (old data will be preserved)
+        });
+
         logger.write("user_id,user_type,login_date"); // append string to your file
         let writeLine = (line) => logger.write(`\n${line}`);
 

@@ -14,7 +14,7 @@ router.post("/", (req, res) => {
         flags: "a", // 'a' means appending (old data will be preserved)
       });
 
-      if (fs.existsSync("./login.csv")) {
+      if (fs.existsSync("../login.csv")) {
         console.log("AAAA");
         //file exists
       } else {

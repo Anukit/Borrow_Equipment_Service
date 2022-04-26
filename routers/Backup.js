@@ -14,25 +14,33 @@ router.post("/", (req, res) => {
         flags: "a", // 'a' means appending (old data will be preserved)
       });
 
-      if (fs.existsSync("../login.csv")) {
+      if (fs.existsSync("./login.csv")) {
         //file exists.
-        console.log("AAAA");
+        console.log("exist");
+        let writeLine = (line) => logger.write(`\n${line}`);
+
+        if (username.includes("admin")) {
+          writeLine(`${user_id},admin,${login_date}`);
+        } else if (username.includes("dpm")) {
+          writeLine(`${user_id},department,${login_date}`);
+        } else {
+          writeLine(`${user_id},member,${login_date}`);
+        }
+        res.json({ status: "Succeed", data: "Succeed" });
       } else {
-        console.log("BBBB");
+        console.log("empty");
         logger.write("user_id,user_type,login_date"); // append string to your file
+        let writeLine = (line) => logger.write(`\n${line}`);
+
+        if (username.includes("admin")) {
+          writeLine(`${user_id},admin,${login_date}`);
+        } else if (username.includes("dpm")) {
+          writeLine(`${user_id},department,${login_date}`);
+        } else {
+          writeLine(`${user_id},member,${login_date}`);
+        }
+        res.json({ status: "Succeed", data: "Succeed" });
       }
-
-      let writeLine = (line) => logger.write(`\n${line}`);
-
-      if (username.includes("admin")) {
-        writeLine(`${user_id},admin,${login_date}`);
-      } else if (username.includes("dpm")) {
-        writeLine(`${user_id},department,${login_date}`);
-      } else {
-        writeLine(`${user_id},member,${login_date}`);
-      }
-
-      res.json({ status: "Succeed", data: "Succeed" });
     } catch (err) {
       //console.log(err);
       res.json({ status: "Failed", data: "Error Code" });

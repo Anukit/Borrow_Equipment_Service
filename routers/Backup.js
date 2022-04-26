@@ -76,6 +76,9 @@ router.post("/", (req, res) => {
         //file empty.
         console.log("empty");
 
+        let logger = fs.createWriteStream("edit_data.csv", {
+          flags: "a", // 'a' means appending (old data will be preserved)
+        });
         logger.write("admin_id,edit_data,edit_date"); // append string to your file
         let writeLine = (line) => logger.write(`\n${line}`);
         writeLine(`${admin_id},${edit_data},${edit_date}`);
